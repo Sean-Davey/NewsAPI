@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Muse News</title>
+  <!--<link rel="shortcut icon" href="favicon.ico">-->
+  <link rel="stylesheet" href="styles/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="styles/style.css" type="text/css">
+  </head>
+  <body>
+
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-danger">
+
+      <svg class="navbar-brand" width="100px" height="57px" viewBox="0 0 100 57">
+          <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="1" y="6" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="27" y="6" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="52" y="6" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="78" y="6" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="1" y="31" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="27" y="31" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="52" y="31" width="21" height="21"></rect>
+              <rect id="Rectangle" fill="#1E1E1E" fill-rule="nonzero" x="78" y="31" width="21" height="21"></rect>
+              <text id="F" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="6" y="23">M</tspan>
+              </text>
+              <text id="A" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="31" y="23">U</tspan>
+              </text>
+              <text id="K" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="56" y="23">S</tspan>
+              </text>
+              <text id="E" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="83" y="23">E</tspan>
+              </text>
+              <text id="N" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="5" y="47">N</tspan>
+              </text>
+              <text id="E" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="32" y="47">E</tspan>
+              </text>
+              <text id="W" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="54.6" y="47">W</tspan>
+              </text>
+              <text id="S" font-family="LucidaGrande-Bold, Lucida Grande" font-size="18" font-weight="bold" fill="#FFFFFF">
+                  <tspan x="84" y="47">S</tspan>
+              </text>
+          </g>
+      </svg>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapse_target" aria-controls="collapse_target" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="collapse_target">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a id="Home" class="nav-link text-white" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a id="Tech" class="nav-link text-white" href="#">Technology</a>
+          </li>
+          <li class="nav-item">
+            <a id="Politics" class="nav-link text-white" href="#">Politics</a>
+          </li>
+            <li class="nav-item">
+              <a id="Entertainment" class="nav-link text-white" href="#">Entertainment</a>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2 c-news-search" type="search" placeholder="Search" aria-label="Search" value="">
+          <button class="btn btn-outline-light my-2 my-sm-0 c-news-searchButton" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+
+
+<div class="c-news-card">
+    <span><h1 class="c-news-card-title"> World Headlines</h1></span>
+  <div class="card-deck">
+  </div>
+</div>
+
+
+<script src="./scripts/bootstrap/jquery.js"></script>
+<script src="./scripts/bootstrap/bootstrap.min.js"></script>
+<script src="scripts/newsApi.js" type="text/javascript"></script>
+</body>
+</html>
+

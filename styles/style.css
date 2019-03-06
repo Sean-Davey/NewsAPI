@@ -1,0 +1,33 @@
+.c-news {
+  padding: 2em;
+}
+
+.c-news-card {
+  padding: 2em;
+  margin-top: 5em;
+}
+
+.c-news-card-modal-hide {
+  display: none;
+}
+
+.card {
+  -webkit-box-shadow: 0 14px 43px rgba(180, 180, 180, 0.507);
+          box-shadow: 0 14px 43px rgba(180, 180, 180, 0.507);
+}
+
+.card-text-sm {
+  color: #5252f1;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+h1 {
+  padding-bottom: 0.75em;
+  font-weight: bold;
+}
+
+.navbar-brand {
+  cursor: pointer;
+}
+/*# sourceMappingURL=style.css.map */
