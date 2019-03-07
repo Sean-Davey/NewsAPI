@@ -7,6 +7,16 @@
   margin-top: 1em;
 }
 
+.c-news-moreHeadlines {
+  margin-top: 2em;
+}
+
+.c-news-seemore-button {
+  display: block;
+  margin: 0 auto;
+  top: 5em;
+}
+
 .c-news-card-modal-hide {
   display: none;
 }
@@ -25,6 +35,21 @@
 h1 {
   padding-bottom: 0.75em;
   font-weight: bold;
+}
+
+.error-text {
+  text-align: center;
+  color: #F46363;
+}
+
+.error-text-svg {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 3.5em;
 }
 
 .navbar-brand {
