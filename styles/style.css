@@ -27,9 +27,9 @@
 }
 
 .card-text-sm {
-  color: #5252f1;
-  text-decoration: underline;
-  cursor: pointer;
+  color: #5252f1 !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
 }
 
 h1 {

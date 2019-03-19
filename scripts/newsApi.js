@@ -151,7 +151,6 @@ $("#Tech").click(function() {
                   let storyImage = data.articles[n].urlToImage
                   let storyDescription = data.articles[n].description
                   let storyDate = data.articles[n].publishedAt
-                  let storyContent = data.articles[n].content
        
                  $('.card-deck').append($(
                     "<div class='card'>" +
@@ -160,12 +159,10 @@ $("#Tech").click(function() {
                     "<h5 class='card-title'>'" + storyTitle + "'</h5>" +
                     "<hr/>" +
                     "<p class='card-text'>'" + storyDescription + "'</p>" +
-                    "<a href='#ex1' rel='modal:open' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
                     "</div>" +
                     "<div class='card-footer'>" +
                     "<small class='text-muted'>Published : '" + storyDate + "'</small>" +
-                    "<div class='c-news-card-modal-hide'> '" + storyContent + "</div>" +
-                    "</div>" + 
                     "</div>"
                     )).hide().fadeIn(500)  
                 } 
@@ -181,10 +178,17 @@ $("#Tech").click(function() {
                     console.log(newsItemid);
 
                     for(let n = 0; n < dataSize; n++) {
-                        let storyContent = data.articles[n].content
+                        let chosenStoryContent = data.articles[n].content
+                        let chosenStoryDescription = data.articles[n].description
+                        let chosenStoryTitle = data.articles[n].title
                         if(newsItemid == newsID[n]) {
-                            alert("Clicked :" + storyContent)
+                            
+                            $('.modal-body, .modal-title').empty().promise()
+                            
+                            .then(function() {$('.modal-body').append('<p>' + chosenStoryContent + '</p>')
+                            $('.modal-title').append(chosenStoryTitle)
                         }
+                      )}
                     }
                 })
                 $('.c-news-moreHeadlines, .c-news-card-title').show(0);
