@@ -21,6 +21,27 @@
   display: none;
 }
 
+.c-news-card-dropdown-selects {
+  margin-bottom: 2em;
+  padding: 1.2em;
+  background-color: crimson;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.c-news-card-dropdown-selects:before {
+  content: "Select Country: ";
+  font-size: 1.3em;
+  color: #FFF;
+}
+
+.c-news-card-dropdown-selects select {
+  color: #000;
+  font-size: 1.2em;
+  border: 1px white;
+  padding: 0.5em;
+}
+
 .card {
   -webkit-box-shadow: 0 14px 43px rgba(180, 180, 180, 0.507);
           box-shadow: 0 14px 43px rgba(180, 180, 180, 0.507);
@@ -54,5 +75,9 @@ h1 {
 
 .navbar-brand {
   cursor: pointer;
+}
+
+.hide {
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */
