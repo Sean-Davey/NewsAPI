@@ -1,20 +1,89 @@
 // * ----------------------- GLOBAL VARIABLES ----------------------- * \\
 
-var apiPath='https://newsapi.org/v2/everything?q=';
-var apiQuery='top-headlines';
+var apiPath='https://newsapi.org/v2/';
+var category='everything?q='
+var apiQuery='everything';
+var country = '';
 var pageSize='&pageSize=3';
-const apiKey='&apiKey=1c6b7c4371634281b57f26aa8cd9210e';
+const apiKey='&apiKey=30d24c47ec594157b6f4ce2f2cbb1588';
 var dataSize=3;
 var topic = 'World Headlines'
 
-// backupKey 30d24c47ec594157b6f4ce2f2cbb1588 
+
+// backupKey 1c6b7c4371634281b57f26aa8cd9210e  
 
 $(document).ready(function() {
-    newsRequest();
+
+    
+
+    if(navigator.onLine) { // true|false
+        newsRequest();
+        console.log(localStorage.worldHeadlines);
+    }
+    else {
+
+
+        console.log(localStorage.worldHeadlines)
+
+        var story = JSON.parse(localStorage.getItem('worldHeadlines'));
+        WorldHeadlines = story;
+
+        for(let n = 0; n < dataSize; n++)
+        {
+            {
+                
+                let storyTitle = WorldHeadlines.storyTitle
+
+        $('.card-deck').append($(
+            "<div class='card'>" +
+            "<img class='card-img-top' src='" + WorldHeadlines.storyImage + "' alt='Card image cap'> " +
+            "<div class='card-body'>" +
+            "<h5 class='card-title'>'" + storyTitle + "'</h5>" +
+            "<hr/>" +
+            "<p class='card-text'>'" + WorldHeadlines.storyDescription + "'</p>" +
+            "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+            "</div>" +
+            "<div class='card-footer'>" +
+            "<small class='text-muted'>Published : '" + WorldHeadlines.storyDate + "'</small>" +
+            "</div>"
+            )).hide().fadeIn(500) 
+    }
+    }
+}
+
+/*
+    console.dir(localStorage);
+    if (localStorage.getItem("return_user")) { // If the "return_user" object exists indicating the user has visited before and accepted T&C's
+    $("#c_terms_conditions").hide(); // Hide the T&C's 
+    } else {
+    $("#c_terms_conditions").slideDown(); // Hide the T&C's 
+    };
+    $(".c_terms_conditions_button").click(function(){
+    $("#c_terms_conditions").slideUp(800); 
+    acceptLocalStorage(); // Function ran onclick of the "Accept" button, recording in localStorage that the user has accepted T&C's
+
+});
+
+function acceptLocalStorage() {
+    if (typeof(Storage) !== "undefined") {              // If localStorage is enabled
+        var localStorage = window.localStorage;         // Create a variable named localStorage
+        if (localStorage.getItem("return_user")) {      // If the object of localStorage shows the user is a return user 
+          console.log("Return User")                    // console log out "Return User"
+        } else {                                        // If the user is not a return user 
+            console.log("New User")                     // Console log "New User"
+            localStorage.setItem("return_user", true);  // And set boolean to true
+            console.log(localStorage);
+        }
+        } else { 
+            alert("Local storage is not enabled or supported"); 
+        }
+    }
+*/
+
 });
 
 
-// * ----------------------- MORE HEADLINES ----------------------- * \\
+// * ----------------------- VIEW MORE HEADLINES ----------------------- * \\
 
 $('.c-news-moreHeadlines').click(function() {
 
@@ -38,11 +107,14 @@ $('.navbar-brand').click(function() {
 // * ----------------------- SEARCH ----------------------- * \\
 
 $('#Search').click(function() {
+    event.preventDefault();
     var searchValue = $(".c-news-search").val()
     apiQuery = searchValue;
     topic = searchValue + " " + 'Headlines'
     dataSize = 3;
     pageSize = '&pageSize=3';
+    country = '';
+
 
     if(searchValue != "") {
     $(".card").fadeOut(800).promise()
@@ -55,30 +127,86 @@ $('#Search').click(function() {
 // * ----------------------- HOME  ----------------------- * \\
 
 $("#Home").click(function() {
-
-    apiQuery='top-headlines';
+    category='everything?q='
+    country=''
+    apiQuery='everything';
     topic='World Headlines'
     pageSize='&pageSize=3';
     dataSize=3;
     
     console.log(apiQuery);
     
+    $(".c-news-card-dropdown").hide();
+
         $(".card").fadeOut(800).promise()
         .then(function() {
             newsRequest();
         });
     })
 
+// * ----------------------- POPULAR ----------------------- * \\
+
+$('#Popular').click(function() {
+    category=''
+    apiQuery='top-headlines?';
+    topic='Most Popular - United States'
+    pageSize='&pageSize=3';
+    country='country=us'
+    dataSize=3;
+
+    console.log(apiQuery);
+
+    $(".c-news-card-dropdown").html($(
+        "<div class='c-news-card-dropdown-selects'>" +
+        "<select class='c-news-card-dropdown-selects-value'>" +
+        "<option value='country=us'>United States</option>" +
+        "<option value='country=gb'>United Kingdom</option>" +
+        "<option value='country=ie'>Ireland</option>" +
+      "</select>" +
+      "</div>" 
+    )).fadeIn(2000);
+
+    $(".card").fadeOut(800).promise()
+    .then(function() {
+        newsRequest();
+    });
+
+// POPULAR COUNTRY SELECTION
+
+    $(".c-news-card-dropdown-selects-value").on('change', function() {
+     var selectedVal = $(".c-news-card-dropdown-selects-value").find(":selected").val();
+     var selectedText = $(".c-news-card-dropdown-selects-value").find(":selected").text();
+
+        console.log(selectedVal, selectedText);
+        category=''
+        apiQuery='top-headlines?';
+        topic="Most Popular - " + selectedText + " "
+        pageSize='&pageSize=3';
+        country=selectedVal
+        dataSize=3;
+
+        $(".card").fadeOut(800).promise()
+        .then(function() {
+            newsRequest();
+        });
+    })
+})
+
 // * ----------------------- TECHNOLOGY ----------------------- * \\
 
 $("#Tech").click(function() {
 
+    country=''
+    category='everything?q='
     apiQuery='technology';
     topic='Technology Headlines'
     pageSize='&pageSize=3';
     dataSize=3;
     
     console.log(apiQuery);
+
+    $(".c-news-card-dropdown").hide();
+
     
         $(".card").fadeOut(800).promise()
         .then(function() {
@@ -88,15 +216,19 @@ $("#Tech").click(function() {
 
 // * ----------------------- POLITICS ----------------------- * \\
 
-
     $("#Politics").click(function() {
 
+        country=''
+        category='everything?q='
         apiQuery='politics';
         topic='Politics Headlines'
         pageSize='&pageSize=3';
         dataSize=3;
         
         console.log(apiQuery);
+
+        $(".c-news-card-dropdown").hide();
+
         
             $(".card").fadeOut(800).promise()
             .then(function() {
@@ -106,15 +238,19 @@ $("#Tech").click(function() {
 
 // * ----------------------- ENTERTAINMENT ----------------------- * \\
 
-
         $("#Entertainment").click(function() {
 
+            country=''
+            category='everything?q='
             apiQuery='entertainment';
             topic='Entertainment Headlines'
             pageSize='&pageSize=3';
             dataSize=3;
             
             console.log(apiQuery);
+
+            $(".c-news-card-dropdown").hide();
+
             
                 $(".card").fadeOut(800).promise()
                 .then(function() {
@@ -126,14 +262,14 @@ $("#Tech").click(function() {
 
     function newsRequest() {
         
-        var url = apiPath + apiQuery + pageSize + apiKey;
+        var url = apiPath + category + apiQuery + country + pageSize + apiKey;
         console.log(url)
 
         $.ajax(
             {
              type: "GET",
              dataType: "json",
-             cache: false, 
+             cache: true, 
              url: url,
              success: function(data)
              {
@@ -142,8 +278,8 @@ $("#Tech").click(function() {
                 
                  console.dir(data);
 
-                 $('.c-news-card-title').html(topic)
-                 
+                $('.c-news-card-title').html(topic)
+
                  try {
                  for(let n = 0; n < dataSize; n++)
                  {
@@ -151,6 +287,22 @@ $("#Tech").click(function() {
                   let storyImage = data.articles[n].urlToImage
                   let storyDescription = data.articles[n].description
                   let storyDate = data.articles[n].publishedAt
+
+                  if (localStorage != data.articles) {
+                    localStorage.setItem('worldHeadlines', JSON.stringify({
+                    storyTitle : data.articles[n].title,
+                    storyImage : data.articles[n].urlToImage,
+                    storyDescription : data.articles[n].description,
+                    storyDate : data.articles[n].publishedAt,
+                    }));
+                } else {
+                    // Need to append something to the screen to warn no data exists
+                }
+
+                var story = JSON.parse(localStorage.getItem('worldHeadlines'));
+                WorldHeadlines = story;
+                //console.log(story.storyImage);
+                console.log(WorldHeadlines.storyTitle);
        
                  $('.card-deck').append($(
                     "<div class='card'>" +
