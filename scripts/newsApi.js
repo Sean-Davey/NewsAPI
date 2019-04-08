@@ -17,68 +17,39 @@ $(document).ready(function() {
     
 
     if(navigator.onLine) { // true|false
-        newsRequest();
-        console.log(localStorage.worldHeadlines);
+    newsRequest();
+   
+
     }
     else {
 
+        var WorldHeadlines = JSON.parse(localStorage.getItem('worldHeadlines'));
 
-        console.log(localStorage.worldHeadlines)
+        console.dir(WorldHeadlines)
 
-        var story = JSON.parse(localStorage.getItem('worldHeadlines'));
-        WorldHeadlines = story;
+        for(let n = 0; n < dataSize; n++) {
+            let offlineTitle = WorldHeadlines.data.articles[n].title
+            let offlineImage = WorldHeadlines.data.articles[n].urlToImage
+            let offlineDescription = WorldHeadlines.data.articles[n].description
+            let offlineDate = WorldHeadlines.data.articles[n].publishedAt
 
-        for(let n = 0; n < dataSize; n++)
-        {
-            {
-                
-                let storyTitle = WorldHeadlines.storyTitle
+            console.log(offlineTitle)
 
-        $('.card-deck').append($(
-            "<div class='card'>" +
-            "<img class='card-img-top' src='" + WorldHeadlines.storyImage + "' alt='Card image cap'> " +
-            "<div class='card-body'>" +
-            "<h5 class='card-title'>'" + storyTitle + "'</h5>" +
-            "<hr/>" +
-            "<p class='card-text'>'" + WorldHeadlines.storyDescription + "'</p>" +
-            "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
-            "</div>" +
-            "<div class='card-footer'>" +
-            "<small class='text-muted'>Published : '" + WorldHeadlines.storyDate + "'</small>" +
-            "</div>"
-            )).hide().fadeIn(500) 
-    }
-    }
-}
+            $('.card-deck').append($(
+                "<div class='card'>" +
+                "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                "<div class='card-body'>" +
+                "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                "<hr/>" +
+                "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                "</div>" +
+                "<div class='card-footer'>" +
+                "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                "</div>"
+                )).hide().fadeIn(500) 
 
-/*
-    console.dir(localStorage);
-    if (localStorage.getItem("return_user")) { // If the "return_user" object exists indicating the user has visited before and accepted T&C's
-    $("#c_terms_conditions").hide(); // Hide the T&C's 
-    } else {
-    $("#c_terms_conditions").slideDown(); // Hide the T&C's 
-    };
-    $(".c_terms_conditions_button").click(function(){
-    $("#c_terms_conditions").slideUp(800); 
-    acceptLocalStorage(); // Function ran onclick of the "Accept" button, recording in localStorage that the user has accepted T&C's
-
-});
-
-function acceptLocalStorage() {
-    if (typeof(Storage) !== "undefined") {              // If localStorage is enabled
-        var localStorage = window.localStorage;         // Create a variable named localStorage
-        if (localStorage.getItem("return_user")) {      // If the object of localStorage shows the user is a return user 
-          console.log("Return User")                    // console log out "Return User"
-        } else {                                        // If the user is not a return user 
-            console.log("New User")                     // Console log "New User"
-            localStorage.setItem("return_user", true);  // And set boolean to true
-            console.log(localStorage);
-        }
-        } else { 
-            alert("Local storage is not enabled or supported"); 
-        }
-    }
-*/
+        }}
 
 });
 
@@ -111,10 +82,12 @@ $('#Search').click(function() {
     var searchValue = $(".c-news-search").val()
     apiQuery = searchValue;
     topic = searchValue + " " + 'Headlines'
+    category='everything?q='
     dataSize = 3;
     pageSize = '&pageSize=3';
     country = '';
 
+    $(".c-news-card-dropdown").hide();
 
     if(searchValue != "") {
     $(".card").fadeOut(800).promise()
@@ -127,6 +100,9 @@ $('#Search').click(function() {
 // * ----------------------- HOME  ----------------------- * \\
 
 $("#Home").click(function() {
+
+    if(navigator.onLine) { // true
+
     category='everything?q='
     country=''
     apiQuery='everything';
@@ -142,7 +118,49 @@ $("#Home").click(function() {
         .then(function() {
             newsRequest();
         });
-    })
+    }
+
+
+else {
+
+    topic='World Headlines'
+
+    $('.c-news-card-title').html(topic)
+
+    var WorldHeadlines = JSON.parse(localStorage.getItem('worldHeadlines'));
+
+    console.dir(WorldHeadlines)
+
+    $(".c-news-card-dropdown").hide();
+
+    for(let n = 0; n < dataSize; n++) {
+        let offlineTitle = WorldHeadlines.data.articles[n].title
+        let offlineImage = WorldHeadlines.data.articles[n].urlToImage
+        let offlineDescription = WorldHeadlines.data.articles[n].description
+        let offlineDate = WorldHeadlines.data.articles[n].publishedAt
+
+        console.log(offlineTitle)
+
+        $(".card").fadeOut(800).promise()
+        .then(function() {
+
+        $('.card-deck').append($(
+            "<div class='card'>" +
+            "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+            "<div class='card-body'>" +
+            "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+            "<hr/>" +
+            "<p class='card-text'>'" + offlineDescription + "'</p>" +
+            "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+            "</div>" +
+            "<div class='card-footer'>" +
+            "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+            "</div>"
+            )).hide().fadeIn(500) 
+        });
+}
+}
+})
 
 // * ----------------------- POPULAR ----------------------- * \\
 
@@ -196,6 +214,9 @@ $('#Popular').click(function() {
 
 $("#Tech").click(function() {
 
+
+    if(navigator.onLine) { // true
+
     country=''
     category='everything?q='
     apiQuery='technology';
@@ -212,11 +233,55 @@ $("#Tech").click(function() {
         .then(function() {
             newsRequest();
         });
-    })
+    }
+
+    else {
+
+        topic='Technology Headlines'
+
+        $('.c-news-card-title').html(topic)
+
+        var Technology = JSON.parse(localStorage.getItem('technology'));
+
+        console.dir(Technology)
+
+        $(".c-news-card-dropdown").hide();
+
+        for(let n = 0; n < dataSize; n++) {
+            let offlineTitle = Technology.data.articles[n].title
+            let offlineImage = Technology.data.articles[n].urlToImage
+            let offlineDescription = Technology.data.articles[n].description
+            let offlineDate = Technology.data.articles[n].publishedAt
+
+            console.log(offlineTitle)
+
+            $(".card").fadeOut(800).promise()
+            .then(function() {
+
+            $('.card-deck').append($(
+                "<div class='card'>" +
+                "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                "<div class='card-body'>" +
+                "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                "<hr/>" +
+                "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                "</div>" +
+                "<div class='card-footer'>" +
+                "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                "</div>"
+                )).hide().fadeIn(500) 
+            });
+    }
+    }
+})
+    
 
 // * ----------------------- POLITICS ----------------------- * \\
 
     $("#Politics").click(function() {
+
+        if(navigator.onLine) { // true
 
         country=''
         category='everything?q='
@@ -229,16 +294,60 @@ $("#Tech").click(function() {
 
         $(".c-news-card-dropdown").hide();
 
-        
+
             $(".card").fadeOut(800).promise()
             .then(function() {
                 newsRequest();
             });
-        })
+        }
+
+        else {
+            topic='Politics Headlines'
+
+            $('.c-news-card-title').html(topic)
+    
+            var Politics = JSON.parse(localStorage.getItem('politics'));
+    
+            console.dir(Politics)
+
+            $(".c-news-card-dropdown").hide();
+    
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = Politics.data.articles[n].title
+                let offlineImage = Politics.data.articles[n].urlToImage
+                let offlineDescription = Politics.data.articles[n].description
+                let offlineDate = Politics.data.articles[n].publishedAt
+    
+                console.log(offlineTitle)
+    
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+    
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+        }
+    }) 
+    
+        
 
 // * ----------------------- ENTERTAINMENT ----------------------- * \\
 
         $("#Entertainment").click(function() {
+
+            if(navigator.onLine) { // true
 
             country=''
             category='everything?q='
@@ -256,7 +365,46 @@ $("#Tech").click(function() {
                 .then(function() {
                     newsRequest();
                 });
-            })
+            }
+        else {
+            topic='Entertainment Headlines'
+
+            $('.c-news-card-title').html(topic)
+    
+            var Entertainment = JSON.parse(localStorage.getItem('entertainment'));
+    
+            console.dir(Entertainment)
+
+            $(".c-news-card-dropdown").hide();
+    
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = Entertainment.data.articles[n].title
+                let offlineImage = Entertainment.data.articles[n].urlToImage
+                let offlineDescription = Entertainment.data.articles[n].description
+                let offlineDate = Entertainment.data.articles[n].publishedAt
+    
+                console.log(offlineTitle)
+    
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+    
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+        }
+    })
 
 // * ----------------------- NEWS AJAX REQUEST ----------------------- * \\
 
@@ -280,6 +428,46 @@ $("#Tech").click(function() {
 
                 $('.c-news-card-title').html(topic)
 
+            // Store WorldHeadlines for Offline if Visited and new Data
+
+                if (localStorage.getItem('worldHeadlines') != data.articles) {
+                
+                localStorage.setItem('worldHeadlines', JSON.stringify({
+                    data
+                }))}
+
+            // Store Technology for Offline if Visited and new Data
+
+                if (localStorage.getItem('technology') != data.articles && apiQuery == 'technology') {
+                
+                    localStorage.setItem('technology', JSON.stringify({
+                        data
+                    }))
+                console.log('technology');
+                }
+
+            // Store Politics for Offline if Visited and new Data
+
+                if (localStorage.getItem('politics') != data.articles && apiQuery == 'politics') {
+                
+                    localStorage.setItem('politics', JSON.stringify({
+                        data
+                    }))
+                console.log('politics');
+                }
+
+            // Store Entertainment for Offline if Visited and new Data
+
+                if (localStorage.getItem('entertainment') != data.articles && apiQuery == 'entertainment') {
+                
+                    localStorage.setItem('entertainment', JSON.stringify({
+                        data
+                    }))
+                console.log('entertainment');
+                }
+
+
+
                  try {
                  for(let n = 0; n < dataSize; n++)
                  {
@@ -287,22 +475,6 @@ $("#Tech").click(function() {
                   let storyImage = data.articles[n].urlToImage
                   let storyDescription = data.articles[n].description
                   let storyDate = data.articles[n].publishedAt
-
-                  if (localStorage != data.articles) {
-                    localStorage.setItem('worldHeadlines', JSON.stringify({
-                    storyTitle : data.articles[n].title,
-                    storyImage : data.articles[n].urlToImage,
-                    storyDescription : data.articles[n].description,
-                    storyDate : data.articles[n].publishedAt,
-                    }));
-                } else {
-                    // Need to append something to the screen to warn no data exists
-                }
-
-                var story = JSON.parse(localStorage.getItem('worldHeadlines'));
-                WorldHeadlines = story;
-                //console.log(story.storyImage);
-                console.log(WorldHeadlines.storyTitle);
        
                  $('.card-deck').append($(
                     "<div class='card'>" +
