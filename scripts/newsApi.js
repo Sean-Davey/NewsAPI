@@ -1,5 +1,6 @@
 // * ----------------------- GLOBAL VARIABLES ----------------------- * \\
 
+// API DATA
 var apiPath='https://newsapi.org/v2/';
 var category='everything?q='
 var apiQuery='everything';
@@ -9,19 +10,27 @@ const apiKey='&apiKey=30d24c47ec594157b6f4ce2f2cbb1588';
 var dataSize=3;
 var topic = 'World Headlines'
 
+// SVG For Offline
+var offlineSVG = "offlineImage.svg"
+
+
 
 // backupKey 1c6b7c4371634281b57f26aa8cd9210e  
+
+
 
 $(document).ready(function() {
 
     
-
     if(navigator.onLine) { // true|false
-    newsRequest();
+    
+        newsRequest();
    
-
     }
-    else {
+
+    else 
+    
+    {
 
         var WorldHeadlines = JSON.parse(localStorage.getItem('worldHeadlines'));
 
@@ -37,7 +46,7 @@ $(document).ready(function() {
 
             $('.card-deck').append($(
                 "<div class='card'>" +
-                "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
                 "<div class='card-body'>" +
                 "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
                 "<hr/>" +
@@ -79,6 +88,8 @@ $('.navbar-brand').click(function() {
 
 $('#Search').click(function() {
     event.preventDefault();
+
+    if(navigator.onLine) {
     var searchValue = $(".c-news-search").val()
     apiQuery = searchValue;
     topic = searchValue + " " + 'Headlines'
@@ -95,6 +106,35 @@ $('#Search').click(function() {
         newsRequest();
     });
 }   
+}
+
+else {
+
+    let WorldHeadlines = JSON.parse(localStorage.getItem('worldHeadlines'));
+    let Politics = JSON.parse(localStorage.getItem('politics'));
+    let Entertainment = JSON.parse(localStorage.getItem('entertainment'));
+    let Technology = JSON.parse(localStorage.getItem('technology'));
+    let USA = JSON.parse(localStorage.getItem('popular_usa'));
+    let UK = JSON.parse(localStorage.getItem('popular_uk'));
+    let IE = JSON.parse(localStorage.getItem('popular_ie'));
+
+    //console.log(IE.data.articles)
+
+
+    let WorldHeadlineArticles = WorldHeadlines.data.articles
+    let PoliticsArticles = Politics.data.articles
+
+
+    //let localStorageArray = {...WorldHeadlines.data.articles, ...Politics.data.articles, ...Entertainment.data.articles, ...Technology.data.articles, ...USA.data.articles, ...UK.data.articles, ...IE.data.articles}
+    //console.log(localStorageArray);
+
+
+    let array = Object.assign({}, WorldHeadlines, Politics);
+    console.log(array);
+
+
+}
+
 })
 
 // * ----------------------- HOME  ----------------------- * \\
@@ -146,7 +186,7 @@ else {
 
         $('.card-deck').append($(
             "<div class='card'>" +
-            "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+            "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
             "<div class='card-body'>" +
             "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
             "<hr/>" +
@@ -165,6 +205,9 @@ else {
 // * ----------------------- POPULAR ----------------------- * \\
 
 $('#Popular').click(function() {
+
+    if(navigator.onLine) { // true
+
     category=''
     apiQuery='top-headlines?';
     topic='Most Popular - United States'
@@ -208,6 +251,180 @@ $('#Popular').click(function() {
             newsRequest();
         });
     })
+}
+
+else  {
+
+    $(".c-news-card-dropdown").html($(
+        "<div class='c-news-card-dropdown-selects'>" +
+        "<select class='c-news-card-dropdown-selects-value'>" +
+        "<option value='country=us'>United States</option>" +
+        "<option value='country=gb'>United Kingdom</option>" +
+        "<option value='country=ie'>Ireland</option>" +
+      "</select>" +
+      "</div>" 
+    )).fadeIn(2000);
+
+    topic='Most Popular - United States'
+
+            $('.c-news-card-title').html(topic)
+    
+            var popular_usa = JSON.parse(localStorage.getItem('popular_usa'));
+    
+            console.dir(popular_usa)
+            
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = popular_usa.data.articles[n].title
+                let offlineImage = popular_usa.data.articles[n].urlToImage
+                let offlineDescription = popular_usa.data.articles[n].description
+                let offlineDate = popular_usa.data.articles[n].publishedAt
+        
+                console.log(offlineTitle)
+        
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+        
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+
+
+    $(".c-news-card-dropdown-selects-value").on('change', function() {
+        var selectedVal = $(".c-news-card-dropdown-selects-value").find(":selected").val();
+        country=selectedVal
+
+        console.log(country);
+
+        switch (country) { 
+
+            case "country=us":
+            topic='Most Popular - United States'
+
+            $('.c-news-card-title').html(topic)
+    
+            var popular_usa = JSON.parse(localStorage.getItem('popular_usa'));
+    
+            console.dir(popular_usa)
+            
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = popular_usa.data.articles[n].title
+                let offlineImage = popular_usa.data.articles[n].urlToImage
+                let offlineDescription = popular_usa.data.articles[n].description
+                let offlineDate = popular_usa.data.articles[n].publishedAt
+        
+                console.log(offlineTitle)
+        
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+        
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+        break;
+    
+            case "country=gb":
+            topic='Most Popular - United Kingdom'
+
+            $('.c-news-card-title').html(topic)
+    
+            var popular_uk = JSON.parse(localStorage.getItem('popular_uk'));
+    
+            console.dir(popular_uk)
+            
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = popular_uk.data.articles[n].title
+                let offlineImage = popular_uk.data.articles[n].urlToImage
+                let offlineDescription = popular_uk.data.articles[n].description
+                let offlineDate = popular_uk.data.articles[n].publishedAt
+        
+                console.log(offlineTitle)
+        
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+        
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+            break;
+
+            case "country=ie":
+            topic='Most Popular - Ireland'
+
+            $('.c-news-card-title').html(topic)
+    
+            var popular_ie = JSON.parse(localStorage.getItem('popular_ie'));
+    
+            console.dir(popular_ie)
+            
+            for(let n = 0; n < dataSize; n++) {
+                let offlineTitle = popular_ie.data.articles[n].title
+                let offlineImage = popular_ie.data.articles[n].urlToImage
+                let offlineDescription = popular_ie.data.articles[n].description
+                let offlineDate = popular_ie.data.articles[n].publishedAt
+        
+                console.log(offlineTitle)
+        
+                $(".card").fadeOut(800).promise()
+                .then(function() {
+        
+                $('.card-deck').append($(
+                    "<div class='card'>" +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
+                    "<div class='card-body'>" +
+                    "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+                    "<hr/>" +
+                    "<p class='card-text'>'" + offlineDescription + "'</p>" +
+                    "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+                    "</div>" +
+                    "<div class='card-footer'>" +
+                    "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+                    "</div>"
+                    )).hide().fadeIn(500) 
+                });
+        }
+            break;
+        }
+
+    })
+
+}
+
 })
 
 // * ----------------------- TECHNOLOGY ----------------------- * \\
@@ -260,7 +477,7 @@ $("#Tech").click(function() {
 
             $('.card-deck').append($(
                 "<div class='card'>" +
-                "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
                 "<div class='card-body'>" +
                 "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
                 "<hr/>" +
@@ -325,7 +542,7 @@ $("#Tech").click(function() {
     
                 $('.card-deck').append($(
                     "<div class='card'>" +
-                    "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
                     "<div class='card-body'>" +
                     "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
                     "<hr/>" +
@@ -390,7 +607,7 @@ $("#Tech").click(function() {
     
                 $('.card-deck').append($(
                     "<div class='card'>" +
-                    "<img class='card-img-top' src='" + offlineImage + "' alt='Card image cap'> " +
+                    "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
                     "<div class='card-body'>" +
                     "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
                     "<hr/>" +
@@ -464,6 +681,38 @@ $("#Tech").click(function() {
                         data
                     }))
                 console.log('entertainment');
+                }
+
+            // Store Most Popular for Offline if Visited and new Data (USA, UK, IRL)
+
+            // USA
+
+                if (localStorage.getItem('popular_usa') != data.articles && country == 'country=us') {
+                
+                    localStorage.setItem('popular_usa', JSON.stringify({
+                        data
+                    }))
+                console.log('popular_usa');
+                }
+
+            // UK
+
+                if (localStorage.getItem('popular_uk') != data.articles && country == 'country=gb') {
+                
+                    localStorage.setItem('popular_uk', JSON.stringify({
+                        data
+                    }))
+                console.log('popular_uk');
+                }
+
+            // IE
+
+                if (localStorage.getItem('popular_ie') != data.articles && country == 'country=ie') {
+                
+                    localStorage.setItem('popular_ie', JSON.stringify({
+                        data
+                    }))
+                console.log('popular_ie');
                 }
 
 
