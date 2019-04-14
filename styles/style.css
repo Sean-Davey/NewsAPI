@@ -53,6 +53,18 @@
   cursor: pointer !important;
 }
 
+.tool-tip {
+  border-radius: 1em;
+  background-color: #00972d;
+  padding: 1em;
+  color: #FFF;
+  margin-bottom: 1em;
+}
+
+.tool-tip p {
+  font-size: 1.2em;
+}
+
 h1 {
   padding-bottom: 0.75em;
   font-weight: bold;

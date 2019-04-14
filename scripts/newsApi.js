@@ -1,6 +1,7 @@
 // * ----------------------- GLOBAL VARIABLES ----------------------- * \\
 
-// API DATA
+
+// API KEY DATA DE-STRUCTURED
 var apiPath='https://newsapi.org/v2/';
 var category='everything?q='
 var apiQuery='everything';
@@ -8,27 +9,26 @@ var country = '';
 var pageSize='&pageSize=3';
 const apiKey='&apiKey=30d24c47ec594157b6f4ce2f2cbb1588';
 var dataSize=3;
-var topic = 'World Headlines'
+var topic = 'World Headlines';
+var searchValue = '';
 
-// SVG For Offline
+// SVG For Offline Functionality, replacing cached photo's as the API only provides photo URL's
 var offlineSVG = "offlineImage.svg"
-
 
 
 // backupKey 1c6b7c4371634281b57f26aa8cd9210e  
 
 
-
 $(document).ready(function() {
 
     
-    if(navigator.onLine) { // true|false
+    if(navigator.onLine) { // true
     
         newsRequest();
    
     }
 
-    else 
+    else if (localStorage.getItem('worldHeadlines') != undefined)
     
     {
 
@@ -60,7 +60,55 @@ $(document).ready(function() {
 
         }}
 
+// If no news has been stored for worldHeadlines show the following error UI 
+
+    else {
+        $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+        $('.error-text').delay(1000).fadeOut(500)
+    }
+
 });
+
+
+
+// * ----------------------- SEARCH TOOLTIP HEADLINES ----------------------- * \\
+
+$('#searchInput').focusin(function() {
+
+    if (localStorage.getItem("return_user")) { // If the "return_user" object exists indicating the user has visited before and has searched
+    $(".tool-tip").hide(); // Hide the how-to-search tool-tip
+    } else { // Otherwise show them a tool-tip on how to search 
+        $('.c-news-card-tool-tip').html('<div class="tool-tip"> <p> Enter a Topic, Place or Person to get the most up-to-date news!  </p> </div>')
+    };
+    $("#Search").click(function(){
+    $(".tool-tip").slideUp(800); 
+    accept(); // Function ran onclick of the "Search" button, recording in localStorage that the user has successfully searched
+})
+})
+
+$('#searchInput').focusout(function() { // If the user decides not to search remove the UI explaining how to do it
+    $(".tool-tip").hide(); // Hide the tool-tip 
+})
+
+
+
+// * ----------------------- CONFIRM USER KNOWS HOW TO SEARCH  ----------------------- * \\
+
+
+function accept() {
+    if (typeof(Storage) !== "undefined") {              // If localStorage is enabled
+        var localStorage = window.localStorage;         // Create a variable named localStorage
+        if (localStorage.getItem("return_user")) {      // If the object of localStorage shows the user is a return user 
+          console.log("Return User")                    // console log out "Return User"
+        } else {                                        // If the user is not a return user 
+            console.log("New User")                     // Console log "New User"
+            localStorage.setItem("return_user", true);  // And set boolean to true
+            console.log(localStorage);
+        }
+        } else { 
+            alert("Local storage is not enabled or supported"); 
+        }
+    }
 
 
 // * ----------------------- VIEW MORE HEADLINES ----------------------- * \\
@@ -70,7 +118,7 @@ $('.c-news-moreHeadlines').click(function() {
     $(function(){
     dataSize = 6;
     pageSize = '&pageSize=6';
-    }).promise()
+    }).promise() // Increase pageSize from 3 to 6, promise used to prevent UI visual 'glitches' loading in and out
 
     .then(function() {
     $('.card').fadeOut(500);
@@ -80,17 +128,18 @@ $('.c-news-moreHeadlines').click(function() {
 
 // * ----------------------- RETURN TO HOME ----------------------- * \\
 
-$('.navbar-brand').click(function() {
+$('.navbar-brand').click(function() { // UX convention, hit the home button refresh to home
     location.reload();
 })
 
 // * ----------------------- SEARCH ----------------------- * \\
 
 $('#Search').click(function() {
+
     event.preventDefault();
 
     if(navigator.onLine) {
-    var searchValue = $(".c-news-search").val()
+    searchValue = $(".c-news-search").val()
     apiQuery = searchValue;
     topic = searchValue + " " + 'Headlines'
     category='everything?q='
@@ -98,41 +147,63 @@ $('#Search').click(function() {
     pageSize = '&pageSize=3';
     country = '';
 
-    $(".c-news-card-dropdown").hide();
+    $(".c-news-card-dropdown").hide(); // hide cards before showing back with updated news
 
     if(searchValue != "") {
     $(".card").fadeOut(800).promise()
     .then(function() {
-        newsRequest();
+        newsRequest(); // invoke AJAX function with updated global variables 
     });
 }   
 }
 
-else {
+else { // offline functionality for search 
+    let searchOffline = JSON.parse(localStorage.getItem('search'));
+    var searchQuery = JSON.parse(localStorage.getItem('searchQuery'));
 
-    let WorldHeadlines = JSON.parse(localStorage.getItem('worldHeadlines'));
-    let Politics = JSON.parse(localStorage.getItem('politics'));
-    let Entertainment = JSON.parse(localStorage.getItem('entertainment'));
-    let Technology = JSON.parse(localStorage.getItem('technology'));
-    let USA = JSON.parse(localStorage.getItem('popular_usa'));
-    let UK = JSON.parse(localStorage.getItem('popular_uk'));
-    let IE = JSON.parse(localStorage.getItem('popular_ie'));
+    searchValue = $(".c-news-search").val()
+    $(".c-news-card-dropdown").hide();
 
-    //console.log(IE.data.articles)
+// If the term / phrase the user is searching for matches an item in local storage
 
+    if(searchValue === searchQuery.searchValue) {
 
-    let WorldHeadlineArticles = WorldHeadlines.data.articles
-    let PoliticsArticles = Politics.data.articles
+        $('.c-news-card-title').html(searchValue)
 
+// Append the localstorage news items to the screen
 
-    //let localStorageArray = {...WorldHeadlines.data.articles, ...Politics.data.articles, ...Entertainment.data.articles, ...Technology.data.articles, ...USA.data.articles, ...UK.data.articles, ...IE.data.articles}
-    //console.log(localStorageArray);
+    for(let n = 0; n < dataSize; n++) {
+        let offlineTitle = searchOffline.data.articles[n].title
+        let offlineImage = searchOffline.data.articles[n].urlToImage
+        let offlineDescription = searchOffline.data.articles[n].description
+        let offlineDate = searchOffline.data.articles[n].publishedAt
 
+        console.log(offlineTitle)
 
-    let array = Object.assign({}, WorldHeadlines, Politics);
-    console.log(array);
+        $(".card").fadeOut(800).promise()
+        .then(function() {
 
+        $('.card-deck').append($(
+            "<div class='card'>" +
+            "<img class='card-img-top' src='" + offlineSVG + "' alt='Card image cap'> " +
+            "<div class='card-body'>" +
+            "<h5 class='card-title'>'" + offlineTitle + "'</h5>" +
+            "<hr/>" +
+            "<p class='card-text'>'" + offlineDescription + "'</p>" +
+            "<a data-toggle='modal' data-target='#exampleModal' class='card-text-sm' id="+ n +"> See More </a>" +
+            "</div>" +
+            "<div class='card-footer'>" +
+            "<small class='text-muted'>Published : '" + offlineDate + "'</small>" +
+            "</div>"
+            )).hide().fadeIn(500) 
+        });
+}
+    }
 
+    else { // If no localStorage exists show the error UI
+        $('.c-news-card').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+        $('.error-text').delay(1000).fadeOut(500)
+    }
 }
 
 })
@@ -149,7 +220,8 @@ $("#Home").click(function() {
     topic='World Headlines'
     pageSize='&pageSize=3';
     dataSize=3;
-    
+    searchValue = '';
+
     console.log(apiQuery);
     
     $(".c-news-card-dropdown").hide();
@@ -161,7 +233,7 @@ $("#Home").click(function() {
     }
 
 
-else {
+else if (localStorage.worldHeadlines != null){
 
     topic='World Headlines'
 
@@ -200,6 +272,11 @@ else {
         });
 }
 }
+
+else {
+    $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+    $('.error-text').delay(1000).fadeOut(500)
+}
 })
 
 // * ----------------------- POPULAR ----------------------- * \\
@@ -214,6 +291,7 @@ $('#Popular').click(function() {
     pageSize='&pageSize=3';
     country='country=us'
     dataSize=3;
+    searchValue = '';
 
     console.log(apiQuery);
 
@@ -253,7 +331,7 @@ $('#Popular').click(function() {
     })
 }
 
-else  {
+else if (localStorage.popular_usa != undefined)  {
 
     $(".c-news-card-dropdown").html($(
         "<div class='c-news-card-dropdown-selects'>" +
@@ -307,9 +385,9 @@ else  {
 
         console.log(country);
 
-        switch (country) { 
+        switch (country) { // Switch statement for Country which is derived from the global variable selection
 
-            case "country=us":
+            case "country=us": // if country variable matches the case value loop through and append the following
             topic='Most Popular - United States'
 
             $('.c-news-card-title').html(topic)
@@ -344,9 +422,10 @@ else  {
                     )).hide().fadeIn(500) 
                 });
         }
-        break;
+        break; // if matched break the statement (do not carry out any cases)
     
-            case "country=gb":
+            case "country=gb": // if country var matches the case 
+            if(localStorage.popular_uk != null) {
             topic='Most Popular - United Kingdom'
 
             $('.c-news-card-title').html(topic)
@@ -381,9 +460,11 @@ else  {
                     )).hide().fadeIn(500) 
                 });
         }
+    }
             break;
 
-            case "country=ie":
+            case "country=ie": // if country var matches the case 
+            if(localStorage.popular_ie != null) {
             topic='Most Popular - Ireland'
 
             $('.c-news-card-title').html(topic)
@@ -418,11 +499,17 @@ else  {
                     )).hide().fadeIn(500) 
                 });
         }
+    }
             break;
         }
 
     })
 
+}
+
+else {
+    $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+    $('.error-text').delay(1000).fadeOut(500)
 }
 
 })
@@ -440,6 +527,7 @@ $("#Tech").click(function() {
     topic='Technology Headlines'
     pageSize='&pageSize=3';
     dataSize=3;
+    searchValue = '';
     
     console.log(apiQuery);
 
@@ -452,7 +540,7 @@ $("#Tech").click(function() {
         });
     }
 
-    else {
+    else if (localStorage.technology != null ){
 
         topic='Technology Headlines'
 
@@ -491,6 +579,12 @@ $("#Tech").click(function() {
             });
     }
     }
+
+    else {
+        $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+        $('.error-text').delay(1000).fadeOut(500)
+    }
+
 })
     
 
@@ -506,6 +600,7 @@ $("#Tech").click(function() {
         topic='Politics Headlines'
         pageSize='&pageSize=3';
         dataSize=3;
+        searchValue = '';
         
         console.log(apiQuery);
 
@@ -518,7 +613,7 @@ $("#Tech").click(function() {
             });
         }
 
-        else {
+        else if (localStorage.politics != null) {
             topic='Politics Headlines'
 
             $('.c-news-card-title').html(topic)
@@ -556,6 +651,12 @@ $("#Tech").click(function() {
                 });
         }
         }
+
+        else {
+            $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+            $('.error-text').delay(1000).fadeOut(500)
+        }
+
     }) 
     
         
@@ -572,6 +673,7 @@ $("#Tech").click(function() {
             topic='Entertainment Headlines'
             pageSize='&pageSize=3';
             dataSize=3;
+            searchValue = '';
             
             console.log(apiQuery);
 
@@ -583,7 +685,7 @@ $("#Tech").click(function() {
                     newsRequest();
                 });
             }
-        else {
+        else if (localStorage.technology != null) {
             topic='Entertainment Headlines'
 
             $('.c-news-card-title').html(topic)
@@ -621,12 +723,19 @@ $("#Tech").click(function() {
                 });
         }
         }
+
+        else {
+            $('.c-news-card-title').prepend('<h1 class="error-text"> No offline news data is available for this topic </h1>')
+            $('.error-text').delay(1000).fadeOut(500)
+        }
+
     })
 
 // * ----------------------- NEWS AJAX REQUEST ----------------------- * \\
 
     function newsRequest() {
         
+        // Combining the Global Variables of the API key 
         var url = apiPath + category + apiQuery + country + pageSize + apiKey;
         console.log(url)
 
@@ -646,6 +755,7 @@ $("#Tech").click(function() {
                 $('.c-news-card-title').html(topic)
 
             // Store WorldHeadlines for Offline if Visited and new Data
+            // 'Visited' status is determined by the current value of the global variables before the AJAX function is called
 
                 if (localStorage.getItem('worldHeadlines') != data.articles) {
                 
@@ -660,7 +770,6 @@ $("#Tech").click(function() {
                     localStorage.setItem('technology', JSON.stringify({
                         data
                     }))
-                console.log('technology');
                 }
 
             // Store Politics for Offline if Visited and new Data
@@ -670,7 +779,6 @@ $("#Tech").click(function() {
                     localStorage.setItem('politics', JSON.stringify({
                         data
                     }))
-                console.log('politics');
                 }
 
             // Store Entertainment for Offline if Visited and new Data
@@ -680,7 +788,6 @@ $("#Tech").click(function() {
                     localStorage.setItem('entertainment', JSON.stringify({
                         data
                     }))
-                console.log('entertainment');
                 }
 
             // Store Most Popular for Offline if Visited and new Data (USA, UK, IRL)
@@ -692,7 +799,6 @@ $("#Tech").click(function() {
                     localStorage.setItem('popular_usa', JSON.stringify({
                         data
                     }))
-                console.log('popular_usa');
                 }
 
             // UK
@@ -702,7 +808,6 @@ $("#Tech").click(function() {
                     localStorage.setItem('popular_uk', JSON.stringify({
                         data
                     }))
-                console.log('popular_uk');
                 }
 
             // IE
@@ -712,12 +817,23 @@ $("#Tech").click(function() {
                     localStorage.setItem('popular_ie', JSON.stringify({
                         data
                     }))
-                console.log('popular_ie');
                 }
 
 
+            // Search
 
-                 try {
+            if (localStorage.getItem('search') != data.articles && searchValue != '') {
+                
+                localStorage.setItem('search', JSON.stringify({
+                    data
+                }))
+
+                localStorage.setItem('searchQuery', JSON.stringify({
+                    searchValue
+                }))
+            }
+
+                 try { // try and catch as an additional method to prevent errors with the api data not being recieved
                  for(let n = 0; n < dataSize; n++)
                  {
                   let storyTitle = data.articles[n].title
@@ -787,9 +903,12 @@ $("#Tech").click(function() {
             }
             },
             fail: function() {
+                alert('Error locating News Stories, please try again later')
             }
             })
            }
+
+    // Error Inline SVG to be used if a term or phrase the user searches for returns no stories 
 
            var svg = '<div class="error-text-svg">' +
            '<svg width="400" height="400" viewBox="0 0 250 250">' +
