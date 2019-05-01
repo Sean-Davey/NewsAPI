@@ -7,7 +7,6 @@ var category='everything?q='
 var apiQuery='everything';
 var country = '';
 var pageSize='&pageSize=3';
-const apiKey='&apiKey=30d24c47ec594157b6f4ce2f2cbb1588';
 var dataSize=3;
 var topic = 'World Headlines';
 var searchValue = '';
@@ -16,7 +15,6 @@ var searchValue = '';
 var offlineSVG = "offlineImage.svg"
 
 
-// backupKey 1c6b7c4371634281b57f26aa8cd9210e  
 
 
 $(document).ready(function() {
